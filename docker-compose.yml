@@ -1,0 +1,18 @@
+version: 3.8
+
+services:
+  users-app:
+    build: ./
+    command: ./main
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+    - GOPATH=""
+    - message="hi there"
+  db:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - ./.database/data./
