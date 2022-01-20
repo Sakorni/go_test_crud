@@ -17,10 +17,9 @@ func NewUserPostgres(db *sqlx.DB) *UserPostgres {
 
 func (u *UserPostgres) GetUser(id int) (models.User, error) {
 	query := "SELECT * FROM users WHERE id = $1"
-	row := u.db.QueryRowx(query, id)
-	var res models.User
-	err := row.StructScan(&res)
-	return res, err
+	var user models.User
+	err := u.db.Get(&user, query, id)
+	return user, err
 
 }
 
