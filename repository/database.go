@@ -1,23 +1,30 @@
-package database
+package repository
 
 import (
-	"database/sql"
 	"fmt"
-	"os"
+	"github.com/jmoiron/sqlx"
 )
 
-var db *sql.DB
 
+type Config struct{
+	Host string
+	Port string
+	Username string
+	Password string
+	DBName string
+	SSLMode string
 
-
-func init(){
-	var err error
-	databaseurl := "user=postgres password=admin dbname=gomasters sslmode=disable"
-	db, err = sql.Open("pgx", databaseurl)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
 }
+
+func InitDB(cfg Config) (*sqlx.DB, error){
+	config := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Host, cfg.Port, cfg.Username, cfg.Password, cfg.DBName, cfg.SSLMode)
+	db, err := sqlx.Connect("postgres", config)
+	if err != nil{
+		return nil, err
+	}
+	return db, err
+}
+
 
 
