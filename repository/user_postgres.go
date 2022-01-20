@@ -20,7 +20,13 @@ func (u *UserPostgres) GetUser(id int) (models.User, error) {
 }
 
 func (u *UserPostgres) UpdateUser(user models.User) error {
-	panic("implement me")
+	query := "UPDATE users SET firstname=:firstname, lastname=:lastname, email=:email, age=:age WHERE id=:id"
+	_, err := u.db.NamedExec(query, user)
+	if err != nil{
+		return err
+	}
+	return nil
+
 }
 
 func (u *UserPostgres) CreateUser(user models.User) (int, error) {

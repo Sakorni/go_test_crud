@@ -4,11 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"gomasters/models"
 	"net/http"
+	"strconv"
 )
 
 func (h *Handler) createUser(ctx *gin.Context){
-	var user models.User
-	if err := ctx.BindJSON(&user); err != nil{
+	user,err := scanUser(ctx)
+	if err != nil{
 		newErrorResponse(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -21,9 +22,38 @@ func (h *Handler) createUser(ctx *gin.Context){
 		"id":id,
 	})
 }
-func (h *Handler) editUser(ctx *gin.Context){
 
+func (h *Handler) editUser(ctx *gin.Context){
+	user,err := scanUser(ctx)
+	if err != nil{
+		newErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+	strId, ok := ctx.Params.Get("id")
+	if !ok{
+		newErrorResponse(ctx, http.StatusBadRequest, "id must be provided in request params")
+		return
+	}
+	id, err := strconv.Atoi(strId)
+	if err != nil || id < 0{
+		newErrorResponse(ctx, http.StatusBadRequest, "invalid id in params")
+		return
+	}
+
+	user.ID = uint(id)
+	err = h.service.UpdateUser(user)
+	if err != nil{
+		newErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+	ctx.Writer.WriteHeader(http.StatusOK)
 }
 func (h *Handler) getUser(ctx *gin.Context){
 
+}
+
+func scanUser(ctx *gin.Context) (models.User, error){
+	var user models.User
+	err := ctx.BindJSON(&user)
+	return user, err
 }
