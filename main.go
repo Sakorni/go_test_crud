@@ -1,26 +1,31 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 	"gomasters/repository"
 	"gomasters/router"
 	"gomasters/service"
 	"log"
+	"os"
 )
 
 func main() {
 	if err := readConfig(); err != nil{
 		log.Fatalf("error occured during reading config: %v", err)
 	}
+	if err := godotenv.Load(); err != nil{
+		log.Fatalf("error occured during parsing .env: %v", err)
+	}
 	var server router.Server
 	config := repository.Config{
 		Host:     viper.GetString("db.Host"),
 		Port:     viper.GetString("db.Port"),
 		Username: viper.GetString("db.Username"),
-		Password: viper.GetString("db.password"),
 		DBName:   viper.GetString("db.DBName"),
 		SSLMode:  viper.GetString("db.SSLMode"),
+		Password: os.Getenv("DB_PASSWORD"),
 	}
 	db, err := repository.InitDB(config)
 	if err != nil{
