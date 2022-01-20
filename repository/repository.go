@@ -6,9 +6,9 @@ import (
 )
 
 type User interface {
-	GetUser() (models.User, error)
+	GetUser(id int) (models.User, error)
 	UpdateUser(models.User) error
-	CreateUser(user models.User) (models.User, error)
+	CreateUser(user models.User) (int, error)
 }
 
 type Repository struct {
@@ -16,5 +16,7 @@ type Repository struct {
 }
 
 func NewRepository(db *sqlx.DB) *Repository{
-	return &Repository{}
+	return &Repository{
+		NewUserPostgres(db),
+	}
 }

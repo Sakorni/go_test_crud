@@ -6,6 +6,7 @@ import (
 )
 
 type Handler struct {
+	service *service.Service
 }
 
 func (h *Handler)InitRoutes() *gin.Engine{
@@ -21,5 +22,5 @@ func (h *Handler)InitRoutes() *gin.Engine{
 }
 
 func NewHandler(service *service.Service) *Handler{
-	return &Handler{}
+	return &Handler{ service}
 }

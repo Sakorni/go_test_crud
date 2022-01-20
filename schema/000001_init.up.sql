@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users
     (
-        id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+        id serial PRIMARY KEY,
         firstname VARCHAR(50),
         lastname VARCHAR(50),
         email VARCHAR(100),

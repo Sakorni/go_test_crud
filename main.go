@@ -3,20 +3,20 @@ package main
 import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gomasters/repository"
 	"gomasters/router"
 	"gomasters/service"
-	"log"
 	"os"
 )
 
 func main() {
 	if err := readConfig(); err != nil{
-		log.Fatalf("error occured during reading config: %v", err)
+		logrus.Fatalf("error occured during reading config: %v", err)
 	}
 	if err := godotenv.Load(); err != nil{
-		log.Fatalf("error occured during parsing .env: %v", err)
+		logrus.Fatalf("error occured during parsing .env: %v", err)
 	}
 	var server router.Server
 	config := repository.Config{
@@ -29,13 +29,13 @@ func main() {
 	}
 	db, err := repository.InitDB(config)
 	if err != nil{
-		log.Fatalf("error occured during connecting to DB: %v", err)
+		logrus.Fatalf("error occured during connecting to DB: %v", err)
 	}
 	repository := repository.NewRepository(db)
 	service := service.NewService(repository)
 	handler := router.NewHandler(service)
-	if err := server.Run("8080", handler.InitRoutes()); err != nil{
-		log.Fatalf("an error occured during server's work: %s",err)
+	if err := server.Run(viper.GetString("port"), handler.InitRoutes()); err != nil{
+		logrus.Fatalf("an error occured during server's work: %s",err)
 	}
 }
 

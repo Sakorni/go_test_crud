@@ -6,15 +6,17 @@ import (
 )
 
 type User interface {
-	GetUser() (models.User, error)
+	GetUser(id int) (models.User, error)
 	UpdateUser(models.User) error
-	CreateUser(user models.User) (models.User, error)
+	CreateUser(user models.User) (int, error)
 }
 type Service struct {
 	User
 }
 
 func NewService(repository *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		NewUserService(*repository),
+	}
 }
 
