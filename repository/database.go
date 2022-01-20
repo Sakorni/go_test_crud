@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"io/ioutil"
 )
 
 
@@ -23,8 +24,21 @@ func InitDB(cfg Config) (*sqlx.DB, error){
 	if err != nil{
 		return nil, err
 	}
+	_, tableCheck := db.Query("Select * from users")
+	if tableCheck != nil{
+		err = runMigrationLocal(db)
+	}
 	return db, err
 }
 
+func runMigrationLocal(db *sqlx.DB) error{
+	file, err := ioutil.ReadFile("./schema/000001_init.up.sql")
+	if err != nil{
+		return err
+	}
+	_, err = db.Exec(string(file))
+	return err
+
+}
 
 

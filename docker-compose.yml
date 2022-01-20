@@ -1,7 +1,7 @@
-version: 3.8
+version: '3.8'
 
 services:
-  users-app:
+  gomasters_app:
     build: ./
     command: ./main
     ports:
@@ -9,10 +9,14 @@ services:
     depends_on:
       - db
     environment:
-    - GOPATH=""
     - message="hi there"
+    - DB_PASSWORD="admin"
   db:
     restart: always
     image: postgres:latest
-    volumes:
-      - ./.database/data./
+#    volumes:
+#      - - ./.db/pg/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD="admin"
+    ports:
+      - 5432:5436
